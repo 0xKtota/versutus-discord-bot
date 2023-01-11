@@ -6,6 +6,7 @@ This is a template to create your own discord bot in python.
 Version: 5.4
 """
 
+import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
