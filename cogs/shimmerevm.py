@@ -58,7 +58,7 @@ class ShimmerEvm(commands.Cog, name="ShimmerEVM"):
         
         except urllib.error.URLError as e:
             print("URL Error:", e.reason)
-            goshimmer_status = "{} {}".format(e.reason)
+            goshimmer_status = "{}".format(e.reason)
             
             embed = discord.Embed(title = "❌ An URL error occurred", color=0xFF0000)
             embed.add_field(name = "URL Error: ", value =  goshimmer_status)
