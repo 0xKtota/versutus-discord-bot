@@ -328,6 +328,16 @@ class Owner(commands.Cog, name="owner"):
         )
         await context.send(embed=embed)
 
+    @commands.hybrid_command(
+        name="listbots",
+        description="List all bots in the Discord server.",
+    )
+    @checks.is_owner()
+    async def load(self, context: Context) -> None:
+
+        bots = [member for member in context.guild.members if member.bot]
+        bot_list = '\n'.join([bot.name for bot in bots])
+        await context.send(f'List of bots in this server: {bot_list}')
 
 async def setup(bot):
     await bot.add_cog(Owner(bot))
