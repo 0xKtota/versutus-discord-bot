@@ -333,11 +333,25 @@ class Owner(commands.Cog, name="owner"):
         description="List all bots in the Discord server.",
     )
     @checks.is_owner()
+    
     async def load(self, context: Context) -> None:
+        bot_list = []
+        async def fetch_all_members(guild):
+            async for member in guild.fetch_members(limit=1000):
+                if member.bot:
+                    bot_list.append(member.name)
+                last_member = member
+            while last_member:
+                async for member in guild.fetch_members(limit=1000, after=last_member):
+                    if member.bot:
+                        bot_list.append(member.name)
+                    last_member = member
 
-        bots = [member for member in context.guild.members if member.bot]
-        bot_list = '\n'.join([bot.name for bot in bots])
-        await context.send(f'List of bots in this server: {bot_list}')
+            if context.content.startswith('!bots'):
+                await fetch_all_members(context.guild)
+                await context.channel.send(f'List of bots in this server: {bot_list}')
+
+
 
 async def setup(bot):
     await bot.add_cog(Owner(bot))
