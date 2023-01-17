@@ -121,7 +121,7 @@ async def generate_iota_top_addresses() -> None:
     """
     Generate the top address list for IOTA
     """
-    await token_data.generate_iota_top_addresses()
+    await token_data.main()
 
 @bot.event
 async def on_message(message: discord.Message) -> None:

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `hex_addresses` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `top10_addresses` (
+CREATE TABLE IF NOT EXISTS `top_addresses` (
   `address` text(64) NOT NULL,
   `balance` int(30) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

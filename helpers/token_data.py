@@ -12,7 +12,7 @@ import iota_client
 
 from helpers import db_manager
 
-with open("../config.json") as file:
+with open("config.json") as file:
         config = json.load(file)
 
 async def get_iota_ledger_state():
@@ -29,7 +29,7 @@ async def get_iota_ledger_state():
         chrysalis_reply = response.text 
         data = json.loads(chrysalis_reply)
 
-        db_manager.add_iota_ledger(data = data, table_name = "hex_addresses")
+        await db_manager.add_iota_ledger(data = data, table_name = "hex_addresses")
     
     except Exception as e:
         print(traceback.format_exc())      
@@ -41,19 +41,19 @@ async def get_bech32_address_format_iota(ed25519_address):
 
 async def save_rich_list():
     try:
-        rows = db_manager.get_iota_ledger(table_name = "hex_addresses")
+        rows = await db_manager.get_iota_ledger(table_name = "hex_addresses")
         sorted_addresses = sorted(rows, key=lambda x: x[1], reverse=True)
         top_addresses = sorted_addresses[:10]
         # Convert addresses to bech32 format using map function
         top_addresses = list(map(lambda x: (get_bech32_address_format_iota(x[0]), x[1]), top_addresses))
         
-        db_manager.add_iota_top_addresses(data = top_addresses, table_name = "top_addresses")
+        await db_manager.add_iota_top_addresses(data = top_addresses, table_name = "top_addresses")
     except Exception as e:
         print(traceback.format_exc())  
 
-def main():
-    get_iota_ledger_state()
-    save_rich_list()
+async def main():
+    await get_iota_ledger_state()
+    await save_rich_list()
 
 
 if __name__ == "__main__":
