@@ -114,7 +114,7 @@ async def add_iota_ledger(data, table_name: str):
     async with aiosqlite.connect("database/database.db") as db:
         data_list = [(address["address"], address["balance"]) for address in data['data']['addresses']]
         await db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data_list)
-        db.commit()
+        await db.commit()
         rows = await db.execute(f"SELECT COUNT(*) FROM {table_name}")
         async with rows as cursor:
             result = await cursor.fetchone()
@@ -141,7 +141,7 @@ async def add_iota_top_addresses(data, table_name):
     """
     async with aiosqlite.connect("database/database.db") as db:
         await db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data)
-        db.commit()
+        await db.commit()
         rows = await db.execute(f"SELECT COUNT(*) FROM {table_name}")
         async with rows as cursor:
             result = await cursor.fetchone()
