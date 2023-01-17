@@ -44,6 +44,8 @@ async def save_rich_list():
         rows = await db_manager.get_iota_ledger(table_name = "hex_addresses")
         sorted_addresses = sorted(rows, key=lambda x: x[1], reverse=True)
         top_addresses = sorted_addresses[:10]
+        print(top_addresses)
+        print("top_addresses")
         # Convert addresses to bech32 format using map function
         top_addresses = list(map(lambda x: (get_bech32_address_format_iota(x[0]), x[1]), top_addresses))
         
