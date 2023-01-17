@@ -12,7 +12,6 @@ import os
 import platform
 import random
 import sys
-import requests
 
 import aiosqlite
 import discord
@@ -20,6 +19,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Bot, Context
 
 import exceptions
+from helpers import token_data
 
 if not os.path.isfile("config.json"):
     sys.exit("'config.json' not found! Please add it and try again.")
@@ -102,6 +102,7 @@ async def on_ready() -> None:
     print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     print("-------------------")
     status_task.start()
+    generate_iota_top_addresses.start()
     if config["sync_commands_globally"]:
         print("Syncing commands globally...")
         await bot.tree.sync()
@@ -112,9 +113,15 @@ async def status_task() -> None:
     """
     Setup the game status task of the bot
     """
-    statuses = ["with you!", "with Krypton!", "with humans!"]
+    statuses = ["with you!", "with Skip!", "with humans!"]
     await bot.change_presence(activity=discord.Game(random.choice(statuses)))
-
+    
+@tasks.loop(hours=24)
+async def generate_iota_top_addresses() -> None:
+    """
+    Generate the top address list for IOTA
+    """
+    await token_data.generate_iota_top_addresses()
 
 @bot.event
 async def on_message(message: discord.Message) -> None:
@@ -227,4 +234,4 @@ async def load_cogs() -> None:
 
 asyncio.run(init_db())
 asyncio.run(load_cogs())
-bot.run(config["token"])
+bot.run(config["discord_token"])

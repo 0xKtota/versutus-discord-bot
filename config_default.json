@@ -1,10 +1,12 @@
 {
   "prefix": "!",
-  "token": "INSERT HERE",
+  "discord_token": "INSERT HERE",
   "permissions": "1494648749126",
   "application_id": "INSER HERE",
   "sync_commands_globally": false,
   "owners": [
     ADD YOUR USER ID
-  ]
+  ],
+  "iota_hornet_jwt_token": "",
+  "shimmer_hornet_jwt_token": ""
 }

@@ -1,5 +1,5 @@
 """"
-Copyright © Krypton 2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
+Copyright © antonionardella 2023 - https://github.com/antonionardella (https://linkfree.antonionardella.it)
 Description:
 This is a template to create your own discord bot in python.
 

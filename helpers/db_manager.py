@@ -7,6 +7,7 @@ Version: 5.4
 """
 
 import aiosqlite
+import traceback
 
 
 async def is_blacklisted(user_id: int) -> bool:
@@ -102,3 +103,58 @@ async def get_warnings(user_id: int, server_id: int) -> list:
             for row in result:
                 result_list.append(row)
             return result_list
+
+async def add_iota_ledger(data, table_name: str):
+    """
+    This function will write the Ledger state to the db.
+
+    :param user_id: address and balance in the ledger.
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        data_list = [(address["address"], address["balance"]) for address in data['data']['addresses']]
+        db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data_list)
+        db.commit()
+        rows = await db.execute(f"SELECT COUNT(*) FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result is not None else 0
+
+async def get_iota_ledger(table_name: str):
+    """
+    This function will get the Ledger state from the db.
+
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        rows = await db.execute(f"SELECT address, balance FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchall()
+            return result
+
+
+async def add_iota_top_addresses(data, table_name):
+    """
+    This function will write the top IOTA addreses state to the db.
+
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data)
+        db.commit()
+        rows = await db.execute(f"SELECT COUNT(*) FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result is not None else 0
+
+async def get_iota_top_addresses(table_name: str):
+    """
+    This function will get the Top addresses in bech32 format from the db.
+
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        rows = await db.execute(f"SELECT address, balance FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchall()
+            return result
