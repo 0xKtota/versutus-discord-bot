@@ -8,7 +8,6 @@ Version: 5.4
 import json
 import traceback
 import requests
-import db_manager
 import iota_client
 
 from helpers import db_manager
