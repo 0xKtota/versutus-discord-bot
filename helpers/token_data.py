@@ -47,7 +47,7 @@ async def save_rich_list():
         print(top_addresses)
         print("top_addresses")
         # Convert addresses to bech32 format using map function
-        top_addresses = list(map(lambda x: (get_bech32_address_format_iota(x[0]), x[1]), top_addresses))
+        top_addresses = list(map(lambda x: (await get_bech32_address_format_iota(x[0]), x[1]), top_addresses))
         
         await db_manager.add_iota_top_addresses(data = top_addresses, table_name = "top_addresses")
     except Exception as e:
