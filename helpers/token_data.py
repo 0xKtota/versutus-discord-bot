@@ -11,6 +11,8 @@ import requests
 import db_manager
 import iota_client
 
+from helpers import db_manager
+
 with open("../config.json") as file:
         config = json.load(file)
 
