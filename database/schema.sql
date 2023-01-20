@@ -12,13 +12,25 @@ CREATE TABLE IF NOT EXISTS `warns` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `hex_addresses` (
+CREATE TABLE IF NOT EXISTS `iota_hex_addresses` (
   `address` text(64) NOT NULL,
   `balance` int(30) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `top_addresses` (
+CREATE TABLE IF NOT EXISTS `iota_top_addresses` (
+  `address` text(64) NOT NULL,
+  `balance` int(30) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `shimmer_hex_addresses` (
+  `address` text(64) NOT NULL,
+  `balance` int(30) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `shimmer_top_addresses` (
   `address` text(64) NOT NULL,
   `balance` int(30) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

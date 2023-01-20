@@ -112,6 +112,10 @@ async def add_iota_ledger(data, table_name: str):
     :param table_name: The name of the table where the data is stored.
     """
     async with aiosqlite.connect("database/database.db") as db:
+        # First we clean the content 
+        await db.execute(f"DELETE FROM {table_name}")
+        await db.commit()
+        # Now we update the ledger
         data_list = [(address["address"], address["balance"]) for address in data['data']['addresses']]
         await db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data_list)
         await db.commit()
@@ -140,6 +144,10 @@ async def add_iota_top_addresses(data, table_name):
     :param table_name: The name of the table where the data is stored.
     """
     async with aiosqlite.connect("database/database.db") as db:
+        # First we clean the content
+        await db.execute(f"DELETE FROM {table_name}")
+        await db.commit()
+        # Now we update the rich list
         await db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data)
         await db.commit()
         rows = await db.execute(f"SELECT COUNT(*) FROM {table_name}")
@@ -148,6 +156,70 @@ async def add_iota_top_addresses(data, table_name):
             return result[0] if result is not None else 0
 
 async def get_iota_top_addresses(table_name: str):
+    """
+    This function will get the Top addresses in bech32 format from the db.
+
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        rows = await db.execute(f"SELECT address, balance FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchall()
+            return result
+
+
+async def add_shimmer_ledger(data, table_name: str):
+    """
+    This function will write the Ledger state to the db.
+
+    :param user_id: address and balance in the ledger.
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        # First we clean the content 
+        await db.execute(f"DELETE FROM {table_name}")
+        await db.commit()
+        # Now we update the ledger
+        data_list = [(address, balance) for address, balance in data.items()]
+        await db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data_list)
+        await db.commit()
+        rows = await db.execute(f"SELECT COUNT(*) FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result is not None else 0
+
+
+async def get_shimmer_ledger(table_name: str):
+    """
+    This function will get the Ledger state from the db.
+
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        rows = await db.execute(f"SELECT address, balance FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchall()
+            return result
+
+async def add_shimmer_top_addresses(data, table_name):
+    """
+    This function will write the top IOTA addreses state to the db.
+
+    :param table_name: The name of the table where the data is stored.
+    """
+    async with aiosqlite.connect("database/database.db") as db:
+        # First we clean the content
+        await db.execute(f"DELETE FROM {table_name}")
+        await db.commit()
+        # Now we update the rich list
+        await db.executemany(f"INSERT INTO {table_name} (address, balance) VALUES (?, ?)", data)
+        await db.commit()
+        rows = await db.execute(f"SELECT COUNT(*) FROM {table_name}")
+        async with rows as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result is not None else 0
+
+async def get_shimmer_top_addresses(table_name: str):
     """
     This function will get the Top addresses in bech32 format from the db.
 

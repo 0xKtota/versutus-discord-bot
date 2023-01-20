@@ -8,11 +8,12 @@ Version: 5.4
 
 import json
 from typing import Callable, TypeVar
-
+import discord
 from discord.ext import commands
 
 from exceptions import *
 from helpers import db_manager
+import pickle
 
 T = TypeVar("T")
 

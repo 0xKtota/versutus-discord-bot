@@ -12,6 +12,8 @@ import os
 import platform
 import random
 import sys
+import pickle
+import multiprocessing
 
 import aiosqlite
 import discord
@@ -19,7 +21,8 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Bot, Context
 
 import exceptions
-from helpers import token_data
+from helpers import iota_token_data, shimmer_token_data
+from helpers.logger import logger
 
 if not os.path.isfile("config.json"):
     sys.exit("'config.json' not found! Please add it and try again.")
@@ -80,6 +83,30 @@ async def init_db():
             await db.executescript(file.read())
         await db.commit()
 
+async def create_empty_rich_lists():
+    embed = discord.Embed(title = "🫰 Shimmer Top 5 Richlist", color=0x00FF00)
+
+    embed.add_field(name = "Updates: ", value = "Every 24h")
+    embed.add_field(name = "❌ Richlist not available yet: ", value = "Please have patience, the richlist will be available soon.")
+    with open('embed_shimmer_richlist.pkl', 'wb') as f:
+        pickle.dump(embed, f)
+
+    embed = discord.Embed(title = "🫰 IOTA Top 5 Richlist", color=0x00FF00)
+    embed.add_field(name = "Updates: ", value = "Every 24h")
+    embed.add_field(name = "❌ Richlist not available yet: ", value = "Please have patience, the richlist will be available soon.")
+    with open('embed_iota_richlist.pkl', 'wb') as f:
+        pickle.dump(embed, f)
+
+def background_task():
+    logger.info("Starting background tasks for the DLT ledger data")
+    asyncio.run(iota_token_data.main())
+    asyncio.run(shimmer_token_data.main())
+
+def run_bot():
+    asyncio.run(init_db())
+    asyncio.run(load_cogs())
+    asyncio.run(create_empty_rich_lists())
+    bot.run(config["discord_token"])
 
 """
 Create a bot variable to access the config file in cogs so that you don't need to import it every time.
@@ -102,7 +129,6 @@ async def on_ready() -> None:
     print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     print("-------------------")
     status_task.start()
-    generate_iota_top_addresses.start()
     if config["sync_commands_globally"]:
         print("Syncing commands globally...")
         await bot.tree.sync()
@@ -115,13 +141,6 @@ async def status_task() -> None:
     """
     statuses = ["with you!", "with Skip!", "with humans!"]
     await bot.change_presence(activity=discord.Game(random.choice(statuses)))
-    
-@tasks.loop(hours=24)
-async def generate_iota_top_addresses() -> None:
-    """
-    Generate the top address list for IOTA
-    """
-    await token_data.main()
 
 @bot.event
 async def on_message(message: discord.Message) -> None:
@@ -168,7 +187,7 @@ async def on_command_error(context: Context, error) -> None:
             description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
             color=0xE02B2B
         )
-        await context.send(embed=embed)
+        await context.send(embed=embed, ephemeral=True)
     elif isinstance(error, exceptions.UserBlacklisted):
         """
         The code here will only execute if the error is an instance of 'UserBlacklisted', which can occur when using
@@ -231,7 +250,11 @@ async def load_cogs() -> None:
                 exception = f"{type(e).__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exception}")
 
+if __name__ == "__main__":
+    # Create processing for the bot and the richlist generation
+    process_one = multiprocessing.Process(target=run_bot)
+    process_two = multiprocessing.Process(target=background_task)
 
-asyncio.run(init_db())
-asyncio.run(load_cogs())
-bot.run(config["discord_token"])
+    # Start the processs
+    process_one.start()
+    process_two.start()
