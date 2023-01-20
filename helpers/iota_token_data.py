@@ -9,7 +9,7 @@ import discord
 import json
 import traceback
 import requests
-import iota_client_chrysalis
+import iota_client_production
 import pickle
 import datetime
 
@@ -40,7 +40,7 @@ async def get_iota_ledger_state():
         logger.info(traceback.format_exc())      
 
 async def get_bech32_address_format_iota(ed25519_address):
-    bech32_address = iota_client_chrysalis.Client().hex_to_bech32(ed25519_address, "iota")
+    bech32_address = iota_client_production.Client().hex_to_bech32(ed25519_address, "iota")
     logger.info(bech32_address)
     logger.info("bech32_address")
     return bech32_address
@@ -53,7 +53,7 @@ async def save_iota_rich_list():
         sorted_addresses = sorted(rows, key=lambda x: x[1], reverse=True)
         top_addresses = sorted_addresses[:20]
         # Convert addresses to bech32 format using map function
-        top_addresses = list(map(lambda x: (iota_client_chrysalis.Client().hex_to_bech32(x[0], "iota"), x[1]), top_addresses))
+        top_addresses = list(map(lambda x: (iota_client_production.Client().hex_to_bech32(x[0], "iota"), x[1]), top_addresses))
         await db_manager.add_iota_top_addresses(data = top_addresses, table_name = "iota_top_addresses")
     except Exception as e:
         logger.info(traceback.format_exc())  

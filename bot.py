@@ -14,6 +14,7 @@ import random
 import sys
 import pickle
 import multiprocessing
+import time
 
 import aiosqlite
 import discord
@@ -101,6 +102,8 @@ def background_task():
     logger.info("Starting background tasks for the DLT ledger data")
     asyncio.run(iota_token_data.main())
     asyncio.run(shimmer_token_data.main())
+    time.sleep(24*60*60)
+    background_task()
 
 def run_bot():
     asyncio.run(init_db())
@@ -123,14 +126,14 @@ async def on_ready() -> None:
     """
     The code in this even is executed when the bot is ready
     """
-    print(f"Logged in as {bot.user.name}")
-    print(f"discord.py API version: {discord.__version__}")
-    print(f"Python version: {platform.python_version()}")
-    print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
-    print("-------------------")
+    logger.info(f"Logged in as {bot.user.name}")
+    logger.info(f"discord.py API version: {discord.__version__}")
+    logger.info(f"Python version: {platform.python_version()}")
+    logger.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
+    logger.info("-------------------")
     status_task.start()
     if config["sync_commands_globally"]:
-        print("Syncing commands globally...")
+        logger.info("Syncing commands globally...")
         await bot.tree.sync()
 
 
@@ -164,10 +167,10 @@ async def on_command_completion(context: Context) -> None:
     split = full_command_name.split(" ")
     executed_command = str(split[0])
     if context.guild is not None:
-        print(
+        logger.info(
             f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})")
     else:
-        print(
+        logger.info(
             f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs")
 
 
@@ -245,10 +248,10 @@ async def load_cogs() -> None:
             extension = file[:-3]
             try:
                 await bot.load_extension(f"cogs.{extension}")
-                print(f"Loaded extension '{extension}'")
+                logger.info(f"Loaded extension '{extension}'")
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
-                print(f"Failed to load extension {extension}\n{exception}")
+                logger.info(f"Failed to load extension {extension}\n{exception}")
 
 if __name__ == "__main__":
     # Create processing for the bot and the richlist generation

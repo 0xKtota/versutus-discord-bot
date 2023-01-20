@@ -1,0 +1,16 @@
+git clone https://github.com/iotaledger/iota.rs.git
+cd iota.rs
+git checkout production
+cd bindings/python/native
+sed -i 's/name="iota_client",/name="iota_client_production",/g' setup.py
+sed -i 's/name = "iota-client-python"/name = "iota-client-production"/g' Cargo.toml
+sed -i 's/keywords = ["iota", "tangle", "client", "python"]/keywords = ["iota", "tangle", "client", "python","chrysalis"]/g' Cargo.toml
+sed -i 's/name = "iota_client"/name = "iota_client_production"/g' Cargo.toml
+cd src
+sed -i 's/fn iota_client/fn iota_client_production/g' lib.rs
+cd ..
+pip3 install maturin
+maturin build --manylinux off
+cd target/wheels
+pip3 install iota_client_production-0.2.0a3-cp36-abi3-linux_x86_64.whl
+
