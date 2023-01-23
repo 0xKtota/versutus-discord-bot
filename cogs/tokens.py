@@ -19,7 +19,7 @@ import traceback
 with open("config.json") as file:
         config = json.load(file)
 
-bot_reply_channel_id = "1006484431722262618"
+bot_reply_channel_id = config["bot_reply_channel_id"]
 
 # Here we name the cog and create a new class for the cog.
 class Tokens(commands.Cog, name="tokens"):
