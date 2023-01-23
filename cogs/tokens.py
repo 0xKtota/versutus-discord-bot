@@ -9,10 +9,17 @@ Version: 5.4
 from discord.ext import commands
 from discord.ext.commands import Context
 import pickle
+import json
 
 
 from helpers import checks
 import traceback
+
+# Open the config.json file
+with open("config.json") as file:
+        config = json.load(file)
+
+bot_reply_channel_id = "1006484431722262618"
 
 # Here we name the cog and create a new class for the cog.
 class Tokens(commands.Cog, name="tokens"):
@@ -21,7 +28,7 @@ class Tokens(commands.Cog, name="tokens"):
 
     # Here you can just add your own commands, you'll always need to provide "self" as first parameter.
     
-    @commands.cooldown(1, 3600, commands.BucketType.guild)
+    @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.hybrid_command(
         name="richlist-iota",
         description="Gives the Top 5 IOTA addresses",
@@ -35,7 +42,13 @@ class Tokens(commands.Cog, name="tokens"):
 
         :param context: The application command context.
         """
-        # Do your stuff here        
+        global bot_reply_channel_id
+        # Do your stuff here
+
+        if context.message.channel.id != int(bot_reply_channel_id):
+            await context.send(f"This command can only be used in the <#{bot_reply_channel_id}> channel.")
+            return
+
         try:
             with open('embed_iota_richlist.pkl', 'rb') as f:
                 embed = pickle.load(f)
@@ -44,7 +57,7 @@ class Tokens(commands.Cog, name="tokens"):
         except Exception as e:
             print(traceback.format_exc())
     
-    @commands.cooldown(1, 3600, commands.BucketType.guild)
+    @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.hybrid_command(
         name="richlist-shimmer",
         description="Gives the Top 5 Shimmer addresses",
@@ -58,7 +71,14 @@ class Tokens(commands.Cog, name="tokens"):
 
         :param context: The application command context.
         """
-        # Do your stuff here        
+        # Do your stuff here
+        global bot_reply_channel_id
+        # Do your stuff here
+
+        if context.message.channel.id != int(bot_reply_channel_id):
+            await context.send(f"This command can only be used in the <#{bot_reply_channel_id}> channel.")
+            return      
+        
         try:
             with open('embed_shimmer_richlist.pkl', 'rb') as f:
                 embed = pickle.load(f)

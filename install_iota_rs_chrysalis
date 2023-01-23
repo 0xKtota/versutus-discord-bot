@@ -1,7 +1,6 @@
-git clone https://github.com/iotaledger/iota.rs.git
-cd iota.rs
-git checkout production
-cd bindings/python/native
+#!/bin/bash
+git clone -b production https://github.com/iotaledger/iota.rs
+cd iota.rs/bindings/python/native
 sed -i 's/name="iota_client",/name="iota_client_production",/g' setup.py
 sed -i 's/name = "iota-client-python"/name = "iota-client-production"/g' Cargo.toml
 sed -i 's/keywords = ["iota", "tangle", "client", "python"]/keywords = ["iota", "tangle", "client", "python","chrysalis"]/g' Cargo.toml

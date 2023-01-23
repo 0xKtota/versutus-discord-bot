@@ -1,0 +1,5 @@
+#!/bin/bash
+git clone -b develop https://github.com/iotaledger/iota.rs
+cd iota.rs/client/bindings/python
+pip install -r requirements-dev.txt
+pip install .
